@@ -24,7 +24,7 @@ EOF
 
 echo "Installing compilers"
 ls -1 /var/lib/compiler-images/*.tar.gz | xargs --replace={} sudo cvm add "{}"
-cvm wrap -d "$HOME/bin" gcc g++ ld ar
+cvm -v wrap -d "$HOME/bin" gcc g++ ld ar
 fi
 
 export CVM_IMAGES=$(cvm list | tr '\n' ' ')
