@@ -27,7 +27,7 @@ ls -1 /var/lib/compiler-images/*.tar.gz | xargs --replace={} sudo cvm add "{}"
 cvm -v wrap -d "$HOME/bin" gcc g++ ld ar
 fi
 
-export CVM_IMAGES=$(cvm list | tr '\n' ' ')
+export CVM_IMAGES="$(cvm list | tr '\n' ' ')"
 "$HOME/bin/agent.sh" start
 
 echo "[hit enter key to exit] or run 'docker stop <container>'"
