@@ -1,0 +1,131 @@
+#!/bin/bash
+# ------------------------------------------------------------------
+# [ROEMMI <emilian.mieilica@anritsu.com>] Run a command under an alternate root
+#          Runs a command under an persistent alternate root filesystem 
+#          created from an archive specified on the command line or from 
+#          a copy of an existing directory.
+#          The command is run with the existing user and in the current directory
+#          that is mapped to the new filesystem.
+#
+# Dependency:
+#   script must run under sudo
+# ------------------------------------------------------------------
+VERSION=0.1.0
+USAGE="Usage: sudo `basename $0` [-h] [-v] [-u user] [-m <host path>:<guest path>] <image name> <command> [args ...]\n
+    -v Verbose\n
+    -h Help\n
+    -u User to run the commands as\n
+    -m Map extra paths from host to guest\n
+    --version Print the version\n
+    <image name> - name of the image containing the required filesystem. Install it using 'cvm install'\n
+    <command> - command to execute\n
+    \n
+"
+VERBOSE="false"
+
+die() { echo -e $@; exit 1; } >&2
+verbose() { $VERBOSE && echo -e $@ || true; } >&2
+
+# --- Option processing --------------------------------------------
+if [ $# = 0 ] ; then
+    die $USAGE
+fi
+
+MAP_SPEC=("/proc:/proc" "/dev:/dev")
+
+while getopts ":vhu:m:c-:" optname
+  do
+    case "$optname" in
+      "-")
+        case "${OPTARG}" in
+          "version")
+            echo "Version $VERSION"
+            exit 0
+            ;;
+          "*")
+            die "Unknown option --${OPTARG}"
+            ;;
+        esac
+        ;;
+      "v")
+        VERBOSE="true"
+        ;;
+      "h")
+        echo -e $USAGE
+        exit 0;
+        ;;
+      "u")
+        SU_USER=$OPTARG
+        ;;
+      "m")
+        MAP_SPEC=($OPTARG "${MAP_SPEC[@]}")
+        ;;
+      "?")
+        die "Unknown option $OPTARG"
+        ;;
+      ":")
+        die "No argument value for option $OPTARG"
+        ;;
+      *)
+        die "Unknown error while processing options"
+        ;;
+    esac
+  done
+
+shift $(($OPTIND - 1))
+OPTIND=1
+
+case $# in
+  0) die "Wrong number of arguments: $#\n${USAGE}";;
+  1) die "Wrong number of arguments: $#\n${USAGE}";;
+  *) SOURCE_PATH="$1";;
+esac
+
+shift
+
+if [ ! "$SUDO_USER" ] ; then
+    die "Not runing using sudo\n$USAGE"
+fi
+
+SU_USER=$SUDO_USER
+
+set -e
+
+getent passwd "$SU_USER" > /dev/null || die "Unknown user '$SU_USER'"
+
+[ "$SOURCE_PATH" = "`basename "$SOURCE_PATH"`" ] || die "Image name is not valid: '$SOURCE_PATH'"
+
+CACHE_DIR="/var/cache/chroot-sh/`id -u "$SUDO_USER"`/`basename "$SOURCE_PATH"`"
+
+if [ ! -d "$CACHE_DIR" ] ; then
+  die "'$SOURCE_PATH' was not installed. Use cvm install"
+fi
+
+
+verbose "Running '$@' as $SU_USER in `pwd` from $SOURCE_PATH"
+
+grep -q -e "^[^:]*:[^:]*:`id -u "$SU_USER"`" "$CACHE_DIR/etc/passwd" || echo `getent passwd "$SU_USER"` >> "$CACHE_DIR/etc/passwd"
+grep -q -e "^[^:]*:[^:]*:`id -g "$SU_USER"`" "$CACHE_DIR/etc/group" || echo `getent group "$SU_USER"` >> "$CACHE_DIR/etc/group"
+
+WORK_DIR="/tmp/$$"
+sudo -u "$SU_USER" -- mkdir "$WORK_DIR"
+
+mount_all() {
+  echo "mount -n --bind \"$CACHE_DIR\" \"$WORK_DIR\""
+  IFS=$'\n' SORT_MAP_SPEC=($(sort <<<"${MAP_SPEC[*]}"))
+  for i in ${SORT_MAP_SPEC[@]}; do
+    IFS=':'
+    read -r HOST_SPEC GUEST_SPEC <<< "$i"
+    GUEST_SPEC=${GUEST_SPEC-$HOST_SPEC}
+    unset IFS
+
+    [ -d "$WORK_DIR/$GUEST_SPEC" ] || mkdir -p "${WORK_DIR}${GUEST_SPEC}"
+    verbose "Mounting '$HOST_SPEC' to '$GUEST_SPEC'"
+    echo "mount -n --bind \"$HOST_SPEC\" \"${WORK_DIR}${GUEST_SPEC}\""
+  done
+  echo "chroot --userspec=\"+`id -u "$SU_USER"`:+`id -g "$SU_USER"`\" \"$WORK_DIR\" /bin/sh -c \"cd '`pwd`' ; exec $@\""
+}
+
+mount_all "$@" | unshare -m -- /bin/sh
+
+sudo -u "$SU_USER" -- rm -rf "$WORK_DIR"

@@ -8,4 +8,4 @@ ADD setup-agent.sh /home/teamcity/
 
 EXPOSE 9090
 USER teamcity
-CMD ["/home/teamcity/setup-agent.sh", "run"]
+CMD ["/home/teamcity/setup-agent.sh"]
