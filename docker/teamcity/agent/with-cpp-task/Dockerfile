@@ -17,4 +17,4 @@ RUN apt-get update \
     && chmod +rx /usr/local/bin/*
 
 USER teamcity
-CMD ["/bin/bash","-i"]
+CMD ["/usr/local/bin/bootstrap-agent.sh"]
