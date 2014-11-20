@@ -1,11 +1,10 @@
 FROM ciworks-base
 MAINTAINER Emil Mieilica <emil.mieilica@gmail.com>
 
-RUN useradd -m teamcity
-VOLUME  ["/home/teamcity"]
+RUN useradd -m -s /bin/bash teamcity
 
-ADD setup-agent.sh /home/teamcity/
+ADD bootstrap-agent.sh /usr/local/bin/
 
 EXPOSE 9090
 USER teamcity
-CMD ["/home/teamcity/setup-agent.sh"]
+CMD ["/usr/local/bin/bootstrap-agent.sh"]

@@ -4,6 +4,7 @@ ${AGENT_NAME=$HOSTNAME}
 
 trap "echo TRAPed signal" HUP INT QUIT KILL TERM
 if [ ! -f $HOME/bin/agent.sh ]; then
+    echo "Installing agent"
     wget -O/tmp/buildAgent.zip $TCMASTER_SERVER/update/buildAgent.zip \
     && unzip -q -d $HOME /tmp/buildAgent.zip \
     && rm /tmp/buildAgent.zip \
@@ -15,10 +16,13 @@ tempDir=temp
 systemDir=system
 name=$AGENT_NAME
 EOF
+
+echo "Installing compilers"
+ls -1 /var/lib/compiler-images/*.tar.gz | xargs cvm add
+cvm wrap -d ~/bin gcc g++ ld ar
 fi
 
-cat $HOME/conf/buildAgent.properties
-
+export CVM_IMAGES=$(cvm list | tr '\n' ' ')
 $HOME/bin/agent.sh start
 
 echo "[hit enter key to exit] or run 'docker stop <container>'"
