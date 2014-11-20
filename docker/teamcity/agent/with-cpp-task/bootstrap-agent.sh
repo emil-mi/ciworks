@@ -18,7 +18,7 @@ name=$AGENT_NAME
 EOF
 
 echo "Installing compilers"
-ls -1 /var/lib/compiler-images/*.tar.gz | xargs cvm add
+ls -1 /var/lib/compiler-images/*.tar.gz | xargs --replace={} sudo cvm add {}
 cvm wrap -d ~/bin gcc g++ ld ar
 fi
 
