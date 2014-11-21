@@ -3,7 +3,7 @@ MAINTAINER Emil Mieilica <emil.mieilica@gmail.com>
 USER root
 
 RUN apt-get update \
-    && apt-get install -y curl default-jdk ant ant-contrib \
+    && apt-get install -y curl default-jdk ant ant-contrib rpm \
     && rm -rf /var/lib/apt/lists/* \
     && echo "teamcity ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/teamcity
 
