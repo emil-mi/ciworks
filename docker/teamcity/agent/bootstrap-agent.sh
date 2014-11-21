@@ -21,6 +21,9 @@ name=$AGENT_NAME
 EOF
 fi
 
+echo "[ui]" > "$HOME/.hgrc"
+echo "ssh = hg-ssh-cmd.sh" >> "$HOME/.hgrc"
+
 "$HOME/bin/agent.sh" start
 
 echo "[hit enter key to exit] or run 'docker stop <container>'"
