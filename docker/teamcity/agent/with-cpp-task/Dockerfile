@@ -7,7 +7,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && echo "teamcity ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/teamcity
 
-ADD https://github.com/emil-mi/cpptasks-parallel/releases/download/cpptasks-parallel-2.0.0/cpptasks-parallel-2.0.0.jar /home/teamcity/.ant/lib/
+ADD http://central.maven.org/maven2/io/trygvis/usb/cpptasks-parallel/1.0-beta-5-parallel-1-trygvis-1/cpptasks-parallel-1.0-beta-5-parallel-1-trygvis-1.jar /home/teamcity/.ant/lib/
+#ADD https://github.com/emil-mi/cpptasks-parallel/releases/download/cpptasks-parallel-2.0.0/cpptasks-parallel-2.0.0.jar /home/teamcity/.ant/lib/
 
 ADD bootstrap-agent.sh \
     https://raw.githubusercontent.com/emil-mi/ciworks/master/cvm/cvm \

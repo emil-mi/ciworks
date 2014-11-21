@@ -119,13 +119,14 @@ mount_all() {
     GUEST_SPEC=${GUEST_SPEC-$HOST_SPEC}
     unset IFS
 
-    [ -d "$WORK_DIR/$GUEST_SPEC" ] || mkdir -p "${WORK_DIR}${GUEST_SPEC}"
+    echo "[ -d \"$WORK_DIR/$GUEST_SPEC\" ] || mkdir -p \"${WORK_DIR}${GUEST_SPEC}\""
     verbose "Mounting '$HOST_SPEC' to '$GUEST_SPEC'"
     echo "mount -n --bind \"$HOST_SPEC\" \"${WORK_DIR}${GUEST_SPEC}\""
   done
-  echo "chroot --userspec=\"+`id -u "$SU_USER"`:+`id -g "$SU_USER"`\" \"$WORK_DIR\" /bin/sh -c \"cd '`pwd`' ; exec $@\""
+  echo "exec chroot --userspec=\"+`id -u "$SU_USER"`:+`id -g "$SU_USER"`\" \"$WORK_DIR\" /bin/sh -c \"cd '`pwd`' ; exec $@\""
 }
 
+#TODO: change this to a command file to allow pipes to work
 mount_all "$@" | unshare -m -- /bin/sh
 
 sudo -u "$SU_USER" -- rm -rf "$WORK_DIR"

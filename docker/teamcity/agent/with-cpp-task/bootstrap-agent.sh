@@ -5,37 +5,43 @@ USER=${USER:-$(id -un)}
 HOME=${HOME:-$(getent passwd "$USER" | cut -d: -f6 )}
 
 trap "echo TRAPed signal" HUP INT QUIT KILL TERM
-if [ ! -f $HOME/bin/agent.sh ]; then
+if [ ! -f $HOME/buildAgent/bin/agent.sh ]; then
     echo "Installing agent"
-    
-    wget -O/tmp/buildAgent.zip $TCMASTER_SERVER/update/buildAgent.zip \
-    && unzip -q -d "$HOME" /tmp/buildAgent.zip \
-    && chmod +x "$HOME/bin/agent.sh"
 
-    rm /tmp/buildAgent.zip > /dev/null
- 
-    cat > $HOME/conf/buildAgent.properties << EOF
+    wget -O/tmp/buildAgent.zip $TCMASTER_SERVER/update/buildAgent.zip \
+    && unzip -q -d "$HOME/buildAgent" /tmp/buildAgent.zip \
+    && chmod +x "$HOME/buildAgent/bin/agent.sh" \
+    && cat > "$HOME/buildAgent/conf/buildAgent.properties" << EOF
 serverUrl=$TCMASTER_SERVER
-workDir=work
-tempDir=temp
-systemDir=system
+workDir=../../data/work
+tempDir=../../data/temp
+systemDir=../../data/system
 name=$AGENT_NAME
 EOF
 
+    rm /tmp/buildAgent.zip > /dev/null
+
     echo "Installing compilers"
     ls -1 /var/lib/compiler-images/*.tar.gz | xargs --replace={} sudo cvm add "{}"
-    cvm -v wrap -d "$HOME/bin" gcc g++ ld ar
+    mkdir -p "$HOME/bin"
+    cvm -v wrap -d "$HOME/bin" gcc g++ ld ar ldd
 
     echo "Creating .hgrc"
     echo "[ui]" > "$HOME/.hgrc"
     echo "ssh = hg-ssh-cmd.sh" >> "$HOME/.hgrc"
 fi
 
+if [ ! -f $HOME/buildAgent/bin/agent.sh ]; then
+    echo "The build agent did not install successfully." >&2
+    echo "Does '$TCMASTER_SERVER' look ok? If not set \$TCMASTER_SERVER (and \$AGENT_NAME) to correct values and try again" >&2
+    exit 127
+fi
 
+. "$HOME/.profile"
 export CVM_IMAGES="$(cvm list | tr '\n' ' ')"
-"$HOME/bin/agent.sh" start
+"$HOME/buildAgent/bin/agent.sh" start
 
 echo "[hit enter key to exit] or run 'docker stop <container>'"
 read -r DISCARD
 
-"$HOME/bin/agent.sh" stop force
+"$HOME/buildAgent/bin/agent.sh" stop force
