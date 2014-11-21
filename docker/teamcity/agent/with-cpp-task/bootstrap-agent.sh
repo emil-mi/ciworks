@@ -22,13 +22,15 @@ systemDir=system
 name=$AGENT_NAME
 EOF
 
-echo "Installing compilers"
-ls -1 /var/lib/compiler-images/*.tar.gz | xargs --replace={} sudo cvm add "{}"
-cvm -v wrap -d "$HOME/bin" gcc g++ ld ar
+    echo "Installing compilers"
+    ls -1 /var/lib/compiler-images/*.tar.gz | xargs --replace={} sudo cvm add "{}"
+    cvm -v wrap -d "$HOME/bin" gcc g++ ld ar
+
+    echo "Creating .hgrc"
+    echo "[ui]" > "$HOME/.hgrc"
+    echo "ssh = hg-ssh-cmd.sh" >> "$HOME/.hgrc"
 fi
 
-echo "[ui]" > "$HOME/.hgrc"
-echo "ssh = hg-ssh-cmd.sh" >> "$HOME/.hgrc"
 
 export CVM_IMAGES="$(cvm list | tr '\n' ' ')"
 "$HOME/bin/agent.sh" start
