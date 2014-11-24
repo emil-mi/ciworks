@@ -126,6 +126,7 @@ mount_all() {
   echo "exec chroot --userspec=\"+`id -u "$SU_USER"`:+`id -g "$SU_USER"`\" \"$WORK_DIR\" /bin/sh -c \"cd '`pwd`' ; exec $@\""
 }
 
+set +e
 #TODO: change this to a command file to allow pipes to work
 mount_all "$@" | unshare -m -- /bin/sh
 

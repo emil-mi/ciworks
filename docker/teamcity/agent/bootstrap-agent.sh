@@ -29,6 +29,11 @@ if [ ! -f $HOME/buildAgent/bin/agent.sh ]; then
     exit 127
 fi
 
+#The server URL can change between runs of docker
+grep -v "^serverUrl=" "$HOME/buildAgent/conf/buildAgent.properties" > "$HOME/buildAgent/conf/buildAgent.properties.new"
+echo "serverUrl=$TCMASTER_SERVER" >> "$HOME/buildAgent/conf/buildAgent.properties.new"
+mv -f "$HOME/buildAgent/conf/buildAgent.properties.new" "$HOME/buildAgent/conf/buildAgent.properties"
+
 . "$HOME/.profile"
 echo "[ui]" > "$HOME/.hgrc"
 echo "ssh = hg-ssh-cmd.sh" >> "$HOME/.hgrc"
