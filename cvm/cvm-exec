@@ -130,4 +130,4 @@ set +e
 #TODO: change this to a command file to allow pipes to work
 mount_all "$@" | unshare -m -- /bin/sh
 
-sudo -u "$SU_USER" -- rm -rf "$WORK_DIR"
+sudo -u "$SU_USER" -- rm -r "$WORK_DIR"
