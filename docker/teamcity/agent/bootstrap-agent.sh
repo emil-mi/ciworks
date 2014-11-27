@@ -18,6 +18,7 @@ workDir=../../data/work
 tempDir=../../data/temp
 systemDir=../../data/system
 name=$AGENT_NAME
+authorizationToken=$AGENT_AUTHORIZATION
 EOF
 
     rm /tmp/buildAgent.zip > /dev/null
