@@ -19,4 +19,4 @@ RUN echo "export CLASSPATH=\$(ls -1 ~/.ant/lib | paste -sd ':')" > /home/teamcit
     && chmod +rx /usr/local/bin/*
 
 USER teamcity
-CMD ["/usr/local/bin/bootstrap-agent.sh"]
+CMD ["/usr/local/bin/my_init", "/usr/local/bin/bootstrap-agent.sh"]

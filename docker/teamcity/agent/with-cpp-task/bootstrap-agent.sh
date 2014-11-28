@@ -17,6 +17,7 @@ workDir=../../data/work
 tempDir=../../data/temp
 systemDir=../../data/system
 name=$AGENT_NAME
+ownPort=$AGENT_PORT
 authorizationToken=$AGENT_AUTHORIZATION
 EOF
 

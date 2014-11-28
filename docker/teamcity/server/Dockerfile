@@ -10,4 +10,4 @@ ADD bootstrap-server.sh hg-ssh-cmd.sh /usr/local/bin/
 VOLUME  ["/data/teamcity"]
 
 EXPOSE 8111
-CMD ["/usr/local/bin/bootstrap-server.sh"]
+CMD ["/usr/local/bin/my_init", "/usr/local/bin/bootstrap-server.sh"]
