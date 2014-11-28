@@ -8,6 +8,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
        default-jre-headless python3-minimal \
        tar wget curl psmisc unzip sudo vim \
        mercurial mercurial-git git \
+    && ln -sf /bin/bash /bin/sh \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
