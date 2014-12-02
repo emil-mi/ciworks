@@ -8,6 +8,7 @@ RUN wget -O- http://download.jetbrains.com/teamcity/TeamCity-8.1.5.tar.gz | tar 
 ADD bootstrap-server.sh hg-ssh-cmd.sh /usr/local/bin/
 
 VOLUME  ["/data/teamcity"]
+VOLUME  ["/data/ssh-keys"]
 
 EXPOSE 8111
 CMD ["/usr/local/bin/my_init", "/usr/local/bin/bootstrap-server.sh"]
