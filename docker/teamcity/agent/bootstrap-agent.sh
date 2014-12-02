@@ -42,6 +42,7 @@ echo "ssh = hg-ssh-cmd.sh" >> "$HOME/.hgrc"
 
 "$HOME/buildAgent/bin/agent.sh" start
 
+tail -f "$HOME/buildAgent/logs/teamcity-agent.log" &
 echo "[hit enter key to exit] or run 'docker stop <container>'"
 read -r DISCARD
 

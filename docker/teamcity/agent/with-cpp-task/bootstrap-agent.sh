@@ -49,6 +49,8 @@ mv -f "$HOME/buildAgent/conf/buildAgent.properties.new" "$HOME/buildAgent/conf/b
 export CVM_IMAGES="$(cvm list | tr '\n' ' ')"
 "$HOME/buildAgent/bin/agent.sh" start
 
+tail -f "$HOME/buildAgent/logs/teamcity-agent.log" &
+
 echo "[hit enter key to exit] or run 'docker stop <container>'"
 read -r DISCARD
 

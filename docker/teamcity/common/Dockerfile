@@ -6,7 +6,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get update \
     && apt-get install -y --no-install-recommends apt-transport-https ca-certificates \
        default-jre-headless python3-minimal \
-       tar wget curl psmisc unzip sudo vim \
+       tar wget curl psmisc unzip sudo vim openssh-client \
        mercurial mercurial-git git \
     && ln -sf /bin/bash /bin/sh \
     && apt-get clean \
