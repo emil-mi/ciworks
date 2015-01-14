@@ -15,7 +15,7 @@ ADD bootstrap-agent.sh \
     https://raw.githubusercontent.com/emil-mi/ciworks/master/cvm/cvm \
     https://raw.githubusercontent.com/emil-mi/ciworks/master/cvm/cvm-exec /usr/local/bin/
 
-RUN echo "export CLASSPATH=\$(ls -1 ~/.ant/lib | paste -sd ':')" > /home/teamcity/.ant/ant.conf \
+RUN echo "export CLASSPATH=\$(find ~/.ant/lib | paste -sd ':')" > /home/teamcity/.ant/ant.conf \
     && chown -R teamcity:teamcity /home/teamcity \
     && chmod +rx /usr/local/bin/*
 
