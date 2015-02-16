@@ -107,8 +107,8 @@ verbose "Running '$@' as $SU_USER in `pwd` from $SOURCE_PATH"
 grep -q -e "^[^:]*:[^:]*:`id -u "$SU_USER"`" "$CACHE_DIR/etc/passwd" || echo `getent passwd "$SU_USER"` >> "$CACHE_DIR/etc/passwd"
 grep -q -e "^[^:]*:[^:]*:`id -g "$SU_USER"`" "$CACHE_DIR/etc/group" || echo `getent group "$SU_USER"` >> "$CACHE_DIR/etc/group"
 
-WORK_DIR="/tmp/$$"
-sudo -u "$SU_USER" -- mkdir "$WORK_DIR"
+WORK_DIR=`sudo -u "$SU_USER" -- mktemp --tmpdir -d cvm-exec-XXXXXX`
+#sudo -u "$SU_USER" -- mkdir "$WORK_DIR"
 
 mount_all() {
   echo "mount -n --bind \"$CACHE_DIR\" \"$WORK_DIR\""
@@ -130,4 +130,4 @@ set +e
 #TODO: change this to a command file to allow pipes to work
 mount_all "$@" | unshare -m -- /bin/sh
 
-sudo -u "$SU_USER" -- rm -r "$WORK_DIR"
+sudo -u "$SU_USER" -- rm -rf "$WORK_DIR"
