@@ -129,5 +129,8 @@ mount_all() {
 set +e
 #TODO: change this to a command file to allow pipes to work
 mount_all "$@" | unshare -m -- /bin/sh
+ret=$?
 
 sudo -u "$SU_USER" -- rm -rf "$WORK_DIR"
+
+exit $ret
