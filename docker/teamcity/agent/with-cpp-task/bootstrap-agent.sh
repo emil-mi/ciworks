@@ -26,7 +26,7 @@ EOF
     echo "Installing compilers"
     ls -1 /var/lib/compiler-images/*.tar.gz | xargs --replace={} sudo cvm add "{}"
     mkdir -p "$HOME/bin"
-    cvm -v wrap -d "$HOME/bin" gcc g++ ld ar ldd
+    cvm -v wrap -d "$HOME/bin" gcc g++ ld ar ldd c++ cc nm objcopy objdump ranlib strip
 
     echo "Creating .hgrc"
     echo "[ui]" > "$HOME/.hgrc"
@@ -49,6 +49,7 @@ mv -f "$HOME/buildAgent/conf/buildAgent.properties.new" "$HOME/buildAgent/conf/b
 export CVM_IMAGES="$(cvm list | tr '\n' ' ')"
 "$HOME/buildAgent/bin/agent.sh" start
 
+touch "$HOME/buildAgent/logs/teamcity-agent.log"
 tail -f "$HOME/buildAgent/logs/teamcity-agent.log" &
 
 echo "[hit enter key to exit] or run 'docker stop <container>'"
