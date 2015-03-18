@@ -4,7 +4,7 @@ USER root
 
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get update \
-    && apt-get install -y curl default-jdk ant ant-contrib rpm binutils graphviz gsfonts doxygen \
+    && apt-get install -y curl default-jdk ant ant-contrib rpm binutils graphviz gsfonts doxygen ccache \
     && wget -O- http://www.cmake.org/files/v3.2/cmake-3.2.1-Linux-x86_64.sh > /tmp/cmake-3.2.1-Linux-x86_64.sh \
     && sh /tmp/cmake-3.2.1-Linux-x86_64.sh -- --prefix=/usr/local --skip-license \
     && rm /tmp/cmake-3.2.1-Linux-x86_64.sh \
